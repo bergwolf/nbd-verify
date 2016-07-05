@@ -64,7 +64,7 @@ int verify_device_has_no_data(const char *host, int port)
 		std::cerr << "Problem ending session with NBD server" << std::endl;
 	}
 
-	for(int index=0; index<n_bytes; index++)
+	for(uint64_t index=0; index<n_bytes; index++)
 	{
 		if (data[index])
 		{
@@ -336,7 +336,6 @@ int nbd_verify(std::string host, int port, double sleep_duration, bool do_reconn
 
 	choose_blocks(&random_blocks_dd, &nrs_dd, n_blocks);
 
-	double start_ts = get_ts();
 	for(int index=0; index<N_RANDOM_BLOCKS; index++)
 	{
 		create_data_block_simple(random_blocks_dd[index], BLOCK_SIZE, 0x87654321deadbeefll);
@@ -353,8 +352,6 @@ int nbd_verify(std::string host, int port, double sleep_duration, bool do_reconn
 			}
 		}
 	}
-
-	double blocks_per_second = double(N_RANDOM_BLOCKS) / (get_ts() - start_ts);
 
 	if (do_reconnect)
 	{
@@ -493,7 +490,6 @@ int nbd_verify(std::string host, int port, double sleep_duration, bool do_reconn
 
 	std::cout << std::endl << " * TEST0009 verify that negative offsets are rejected" << std::endl;
 
-	unsigned char offset_buffer[BLOCK_SIZE];
 	uint64_t handle = 1;
 	rc = send_command_nbd(fd, 1, handle, uint64_t(-BLOCK_SIZE / 2), BLOCK_SIZE);
 	if (rc)
@@ -648,7 +644,8 @@ int nbd_iops(const char *host, int port, double dd_perc, bool do_writes)
 			p = block_dd;
 		else
 		{
-			*(uint64_t *)block_ndd = nr;
+			uint64_t *bn = (uint64_t *)block_ndd;
+			*bn = nr;
 
 			p = block_ndd;
 		}

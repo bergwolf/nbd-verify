@@ -77,7 +77,7 @@ int connect_nbd_v1(std::string host, int port, uint64_t *size, uint32_t *flags, 
 
 	int rc = -1;
 	char password[8 + 1] = { 0 };
-	if ((rc = READ(fd, password, 8)) != 8)
+	if ((rc = READ(fd, (unsigned char *)password, 8)) != 8)
 	{
 		std::cerr << "read error waiting for password (" << rc << " bytes out of 8 received)" << std::endl;
 		close(fd);
@@ -194,7 +194,7 @@ int connect_nbd_v1(std::string host, int port, uint64_t *size, uint32_t *flags, 
 		return -1;
 	}
 
-	for(int index=0; index < sizeof filler; index++)
+	for(unsigned int index=0; index < sizeof filler; index++)
 	{
 		if (filler[index])
 		{
@@ -237,7 +237,7 @@ uint32_t verify_ack(int fd, off64_t handle)
 	int rc = -1;
 
 	unsigned char ack[16] = { 0 };
-	if ((rc = READ(fd, (char *)ack, sizeof ack)) != sizeof ack)
+	if ((rc = READ(fd, ack, sizeof ack)) != sizeof ack)
 	{
 		std::cerr << "short read during ack retrieval (" << rc << " bytes out of " << sizeof ack << " received)" << std::endl;
 		return -1;
@@ -275,7 +275,7 @@ uint32_t write_nbd(int fd, off64_t offset, const char *data, size_t len)
 	if (send_command_nbd(fd, 1, handle, offset, len) == -1)
 		return -1;
 
-	if (len > 0 && WRITE(fd, data, len) != len)
+	if (len > 0 && WRITE(fd, data, len) != (ssize_t)len)
 	{
 		std::cerr << "short write sending data for write-command" << std::endl;
 		return -1;
@@ -305,7 +305,7 @@ uint32_t read_nbd(int fd, off64_t offset, char *data, size_t len)
 			return -1;
 		}
 
-		if (READ(fd, data, len) != len)
+		if (READ(fd, (unsigned char *)data, len) != (ssize_t)len)
 		{
 			std::cerr << "short read retrieving data for read-command" << std::endl;
 			return -1;

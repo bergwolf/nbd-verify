@@ -7,9 +7,10 @@ std::string format(const char *fmt, ...)
 {
 	char *buffer = NULL;
         va_list ap;
+	int ignored __attribute__((unused));
 
         va_start(ap, fmt);
-        (void)vasprintf(&buffer, fmt, ap);
+        ignored = vasprintf(&buffer, fmt, ap);
         va_end(ap);
 
 	std::string result = buffer;
