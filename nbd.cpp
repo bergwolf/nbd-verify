@@ -96,7 +96,7 @@ int connect_nbd(std::string host, int port, uint64_t *size, uint32_t *flags, boo
 	}
 
 	unsigned char magic[8] = { 0 };
-	unsigned char expected_magic[8] = { 0x00, 0x00, 0x42, 0x02, 0x81, 0x86, 0x12, 0x53 };
+	unsigned char oldstyle_magic[8] = { 0x00, 0x00, 0x42, 0x02, 0x81, 0x86, 0x12, 0x53 };
 	if ((rc = READ(fd, magic, 8)) != 8)
 	{
 		std::cerr << "read error waiting for magic (" << rc << " bytes out of 8 received)" << std::endl;
@@ -104,7 +104,7 @@ int connect_nbd(std::string host, int port, uint64_t *size, uint32_t *flags, boo
 		return -1;
 	}
 
-	if (memcmp(magic, expected_magic, 8))
+	if (memcmp(magic, oldstyle_magic, 8))
 	{
 		std::cerr << "magic mismatch " << std::endl;
 		close(fd);
