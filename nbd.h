@@ -1,7 +1,7 @@
 extern double read_timeout;
 
 // connect and do handshake
-int connect_nbd(std::string host, int port, uint64_t *size, uint32_t *flags, bool verbose);
+int connect_nbd_v1(std::string host, int port, uint64_t *size, uint32_t *flags, bool verbose);
 
 int send_command_nbd(int fd, uint32_t type, uint64_t handle, uint64_t offset, uint32_t len);
 uint32_t verify_ack(int fd, off64_t handle);

@@ -11,6 +11,8 @@
 #include "utils-str.h"
 #include "utils-time.h"
 
+extern int (*connect_nbd)(std::string host, int port, uint64_t *size, uint32_t *flags, bool verbose);
+
 double read_timeout = 5.0;
 
 int wait_for_data(int fd)
@@ -48,7 +50,7 @@ int wait_for_data(int fd)
 	return -1;
 }
 
-int connect_nbd(std::string host, int port, uint64_t *size, uint32_t *flags, bool verbose)
+int connect_nbd_v1(std::string host, int port, uint64_t *size, uint32_t *flags, bool verbose)
 {
 	int fd = -1;
 

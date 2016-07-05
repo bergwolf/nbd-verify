@@ -24,6 +24,8 @@
 
 #define DATA_CHECK_N_BLOCKS 256
 
+int (*connect_nbd)(std::string host, int port, uint64_t *size, uint32_t *flags, bool verbose);
+
 typedef enum { A_VERIFY, A_IOPS, A_LATENCY } action_t;
 
 int verify_device_has_no_data(const char *host, int port)
@@ -809,6 +811,7 @@ int main(int argc, char *argv[])
 	signal(SIGPIPE, SIG_IGN);
 
 	std::cout << "Verifying that the NBD server does not contain any data..." << std::endl;
+	connect_nbd = connect_nbd_v1;
 	if (verify_device_has_no_data(host, port) && ignore_has_data == false)
 	{
 		std::cerr << "Aborted! (use -f to override this check)" << std::endl;
